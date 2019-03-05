@@ -1,0 +1,40 @@
+input:
+  type: broker
+  broker:
+    copies: 12
+    inputs:
+    - type: kafka_balanced
+      kafka_balanced:
+        consumer_group: blah
+        addresses:
+        - kf.cf.prd349.prod3.datasciences.tmcs:9092
+        topics:
+        - logging.prod.us-east-1.prd160.filtered
+
+pipeline:
+  threads: 8
+  processors:
+    - type: jmespath
+      jmespath:
+        query: log
+    - type: atlas
+    - type: filter
+      filter:
+        type: jmespath
+        jmespath:
+          query: command_type == 'response'
+
+
+
+output:
+  type: lightstep
+  lightstep:
+    access_token: e9b59c8a64f23c32180aa300b39900a1
+    hostname: lightstep.nonprod3.us-east-1.tktm.io
+    port: 8081
+
+logger:
+  # level: ERROR
+  level: ALL
+  # level: ALL
+  # json_format: false

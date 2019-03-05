@@ -34,10 +34,10 @@ import (
 	"github.com/Jeffail/benthos/lib/processor"
 	"github.com/Jeffail/benthos/lib/types"
 	"github.com/Jeffail/benthos/lib/util/config"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // TypeSpec is a constructor and a usage description for each output type.
 type TypeSpec struct {
@@ -56,7 +56,7 @@ type TypeSpec struct {
 // Constructors is a map of all output types with their specs.
 var Constructors = map[string]TypeSpec{}
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // String constants representing each output type.
 const (
@@ -75,6 +75,7 @@ const (
 	TypeInproc        = "inproc"
 	TypeKafka         = "kafka"
 	TypeKinesis       = "kinesis"
+	TypeLightStep     = "lightstep"
 	TypeMQTT          = "mqtt"
 	TypeNanomsg       = "nanomsg"
 	TypeNATS          = "nats"
@@ -92,7 +93,7 @@ const (
 	TypeZMQ4          = "zmq4"
 )
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // Config is the all encompassing configuration struct for all output types.
 type Config struct {
@@ -112,6 +113,7 @@ type Config struct {
 	Inproc        InprocConfig               `json:"inproc" yaml:"inproc"`
 	Kafka         writer.KafkaConfig         `json:"kafka" yaml:"kafka"`
 	Kinesis       writer.KinesisConfig       `json:"kinesis" yaml:"kinesis"`
+	LightStep     writer.LightStepConfig     `json:"lightstep" yaml:"lightstep"`
 	MQTT          writer.MQTTConfig          `json:"mqtt" yaml:"mqtt"`
 	Nanomsg       writer.NanomsgConfig       `json:"nanomsg" yaml:"nanomsg"`
 	NATS          writer.NATSConfig          `json:"nats" yaml:"nats"`
@@ -150,6 +152,7 @@ func NewConfig() Config {
 		Inproc:        NewInprocConfig(),
 		Kafka:         writer.NewKafkaConfig(),
 		Kinesis:       writer.NewKinesisConfig(),
+		LightStep:     writer.NewLightStepConfig(),
 		MQTT:          writer.NewMQTTConfig(),
 		Nanomsg:       writer.NewNanomsgConfig(),
 		NATS:          writer.NewNATSConfig(),
@@ -170,7 +173,7 @@ func NewConfig() Config {
 	}
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // SanitiseConfig returns a sanitised version of the Config, meaning sections
 // that aren't relevant to behaviour are removed.
@@ -224,7 +227,7 @@ func SanitiseConfig(conf Config) (interface{}, error) {
 	return outputMap, nil
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // UnmarshalJSON ensures that when parsing configs that are in a map or slice
 // the default values are still applied.
@@ -283,7 +286,7 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 var header = "This document was generated with `benthos --list-outputs`" + `
 
@@ -406,4 +409,4 @@ func New(
 	return nil, types.ErrInvalidOutputType
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------

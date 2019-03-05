@@ -1,0 +1,111 @@
+input:
+  type: broker
+  broker:
+    copies: 12
+    inputs:
+    - type: kafka_balanced
+      kafka_balanced:
+        consumer_group: benthos.prd160.atlas.metrics
+        addresses:
+        - kf.cf.prd349.prod3.datasciences.tmcs:9092
+        topics:
+        - logging.prod.us-east-1.prd160
+
+pipeline:
+  threads: 8
+  processors:
+    - type: jmespath
+      jmespath:
+        query: log
+    - type: atlas
+
+output:
+  type: broker
+  broker:
+    pattern: fan_out
+    outputs:
+    - processors:
+        - type: metric
+          metric:
+            type: counter
+            path: atlas.commandtype.requests
+            labels:
+              hostname: ${!json_field:hostname}
+              command_type: ${!json_field:command_type}
+            value: 1
+      type: file
+      file:
+        path: /dev/null
+    - processors:
+        - type: filter
+          filter:
+            type: jmespath
+            jmespath:
+              query: "command.response.message.command1.cmd == '0x1'"
+        - type: metric
+          metric:
+            type: counter
+            path: atlas.reserve.requests
+            labels:
+              hostname: ${!json_field:hostname}
+              evid: ${!json_field:command.response.message.command1.evid}
+              vax: ${!json_field:command.response.message.command1.vax}
+            value: 1
+      type: file
+      file:
+        path: /dev/null
+    - processors:
+        - type: filter
+          filter:
+            type: jmespath
+            jmespath:
+              query: "command_type == 'hostload'"
+        - type: metric
+          metric:
+            type: gauge
+            path: atlas.host.load
+            labels:
+              hostname: ${!json_field:hostname}
+              vax: ${!json_field:command.hostload.vax}
+            value: ${!json_field:command.hostload.load}
+      type: file
+      file:
+        path: /dev/null
+    - processors:
+        - type: filter
+          filter:
+            type: jmespath
+            jmespath:
+              query: "command_type == 'opuse'"
+        - type: metric
+          metric:
+            type: gauge
+            path: atlas.opuse.usedtot
+            labels:
+              hostname: ${!json_field:hostname}
+              vax: ${!json_field:command.opuse.host}
+              portset: ${!json_field:command.opuse.portset}
+              queue: ${!json_field:command.opuse.quecur}
+            value: ${!json_field:command.opuse.usedtot}
+        - type: metric
+          metric:
+            type: gauge
+            path: atlas.opuse.max
+            labels:
+              hostname: ${!json_field:hostname}
+              vax: ${!json_field:command.opuse.host}
+              portset: ${!json_field:command.opuse.portset}
+              queue: ${!json_field:command.opuse.quecur}
+            value: ${!json_field:command.opuse.max}
+      type: file
+      file:
+        path: /dev/null
+
+metrics:
+  type: prometheus
+
+logger:
+  # level: ERROR
+  level: INFO
+  # level: ALL
+  json_format: false

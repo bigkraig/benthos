@@ -31,10 +31,10 @@ import (
 	"github.com/Jeffail/benthos/lib/metrics"
 	"github.com/Jeffail/benthos/lib/types"
 	"github.com/Jeffail/benthos/lib/util/config"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // TypeSpec Constructor and a usage description for each processor type.
 type TypeSpec struct {
@@ -51,12 +51,13 @@ type TypeSpec struct {
 // Constructors is a map of all processor types with their specs.
 var Constructors = map[string]TypeSpec{}
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // String constants representing each processor type.
 const (
 	TypeArchive      = "archive"
 	TypeAWK          = "awk"
+	TypeAtlas        = "atlas"
 	TypeBatch        = "batch"
 	TypeBoundsCheck  = "bounds_check"
 	TypeCatch        = "catch"
@@ -99,12 +100,13 @@ const (
 	TypeUnarchive    = "unarchive"
 )
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // Config is the all encompassing configuration struct for all processor types.
 type Config struct {
 	Type         string             `json:"type" yaml:"type"`
 	Archive      ArchiveConfig      `json:"archive" yaml:"archive"`
+	Atlas        AtlasConfig        `json:"atlas" yaml:"atlas""`
 	AWK          AWKConfig          `json:"awk" yaml:"awk"`
 	Batch        BatchConfig        `json:"batch" yaml:"batch"`
 	BoundsCheck  BoundsCheckConfig  `json:"bounds_check" yaml:"bounds_check"`
@@ -153,6 +155,7 @@ func NewConfig() Config {
 	return Config{
 		Type:         "bounds_check",
 		Archive:      NewArchiveConfig(),
+		Atlas:        NewAtlasConfig(),
 		AWK:          NewAWKConfig(),
 		Batch:        NewBatchConfig(),
 		BoundsCheck:  NewBoundsCheckConfig(),
@@ -232,7 +235,7 @@ func SanitiseConfig(conf Config) (interface{}, error) {
 	return outputMap, nil
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 // UnmarshalJSON ensures that when parsing configs that are in a slice the
 // default values are still applied.
@@ -291,7 +294,7 @@ func (m *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 var header = "This document was generated with `benthos --list-processors`." + `
 
@@ -404,4 +407,4 @@ func New(
 	return nil, types.ErrInvalidProcessorType
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------

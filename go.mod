@@ -2,6 +2,7 @@ module github.com/Jeffail/benthos
 
 require (
 	cloud.google.com/go v0.34.0
+	git.tmaws.io/tracing/lightstep-tracer-go v0.15.6
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/DataDog/zstd v1.3.4 // indirect
 	github.com/Jeffail/gabs v1.1.1
@@ -22,6 +23,7 @@ require (
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/colinmarc/hdfs v1.1.3
 	github.com/containerd/continuity v0.0.0-20181203112020-004b46473808 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.3.3 // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
+	github.com/lightstep/lightstep-tracer-go v0.15.6 // indirect
 	github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/nats-io/gnatsd v1.3.0 // indirect
